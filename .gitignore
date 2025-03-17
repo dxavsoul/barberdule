@@ -7,9 +7,12 @@
 .buildlog/
 .history
 
-# Firebase File
+# Files with credentials or sensitive data
 firebase.json
-
+google-services.json
+ios/Runner/AppDelegate.swift
+android/app/src/main/AndroidManifest.xml
+web/index.html
 
 
 # Flutter repo-specific
