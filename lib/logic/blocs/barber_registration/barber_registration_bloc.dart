@@ -75,6 +75,8 @@ class BarberRegistrationBloc
         email: event.email,
         bio: event.bio,
         imageUrl: event.imageUrl,
+        address: event.address,
+        location: event.location,
         specialties: event.specialties,
         barbershopId: event.barbershopId,
         workingHours: event.workingHours,
