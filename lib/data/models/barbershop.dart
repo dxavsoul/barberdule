@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
 
 class Barbershop extends Equatable {
-  final String id;
+  final String? id;
   final String name;
   final String address;
   final String? phone;
@@ -19,13 +19,14 @@ class Barbershop extends Equatable {
   final bool isOpen;
   final double distance;
   final String ownerId; // Firebase Auth user ID of the owner
+  final List<String> barberIds;
 
   // Add getters for latitude and longitude
   double get latitude => location.latitude;
   double get longitude => location.longitude;
 
   Barbershop({
-    required this.id,
+    this.id,
     required this.name,
     required this.address,
     this.phone,
@@ -42,6 +43,7 @@ class Barbershop extends Equatable {
     this.isOpen = false,
     this.distance = 0.0,
     required this.ownerId,
+    this.barberIds = const [],
   }) : createdAt = createdAt ?? DateTime.now();
 
   factory Barbershop.fromJson(Map<String, dynamic> json) {

@@ -15,9 +15,9 @@ class BarberRegistrationBloc
   BarberRegistrationBloc({
     required BarberRepository barberRepository,
     required BarbershopRepository barbershopRepository,
-  }) : _barberRepository = barberRepository,
-       _barbershopRepository = barbershopRepository,
-       super(BarberRegistrationInitial()) {
+  })  : _barberRepository = barberRepository,
+        _barbershopRepository = barbershopRepository,
+        super(BarberRegistrationInitial()) {
     on<BarberRegistrationSubmitted>(_onBarberRegistrationSubmitted);
   }
 
@@ -85,7 +85,7 @@ class BarberRegistrationBloc
       // Add barber to barbershop
       await _barbershopRepository.addBarberToBarbershop(
         event.barbershopId,
-        barberId,
+        barberId!,
       );
 
       emit(BarberRegistrationSuccess(barberId));

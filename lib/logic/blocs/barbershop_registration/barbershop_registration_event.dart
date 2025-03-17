@@ -11,7 +11,7 @@ abstract class BarbershopRegistrationEvent extends Equatable {
 class BarbershopRegistrationSubmitted extends BarbershopRegistrationEvent {
   final String name;
   final String address;
-  final String phoneNumber;
+  final String phone;
   final String email;
   final String description;
   final String? imageUrl;
@@ -22,7 +22,7 @@ class BarbershopRegistrationSubmitted extends BarbershopRegistrationEvent {
   const BarbershopRegistrationSubmitted({
     required this.name,
     required this.address,
-    required this.phoneNumber,
+    required this.phone,
     required this.email,
     required this.description,
     this.imageUrl,
@@ -33,13 +33,13 @@ class BarbershopRegistrationSubmitted extends BarbershopRegistrationEvent {
 
   @override
   List<Object> get props => [
-    name,
-    address,
-    phoneNumber,
-    email,
-    description,
-    location,
-    workingHours,
-    ownerId,
-  ];
+        name,
+        address,
+        phone,
+        email,
+        description,
+        location,
+        workingHours,
+        ownerId,
+      ];
 }

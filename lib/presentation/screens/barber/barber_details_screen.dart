@@ -83,7 +83,7 @@ class BarberDetailsScreen extends StatelessWidget {
                         style: Theme.of(context).textTheme.titleLarge,
                       ),
                       const SizedBox(height: 8),
-                      _buildServicesList(barber.services),
+                      _buildServicesList(barber.specialties),
                       const SizedBox(height: 24),
                       if (barber.rating != null) ...[
                         Text(

@@ -21,10 +21,11 @@ class BarbershopRegistrationBloc
   ) async {
     emit(BarbershopRegistrationLoading());
     try {
+      
       final barbershop = Barbershop(
         name: event.name,
         address: event.address,
-        phoneNumber: event.phoneNumber,
+        phone: event.phone,
         email: event.email,
         description: event.description,
         imageUrl: event.imageUrl,
@@ -37,7 +38,7 @@ class BarbershopRegistrationBloc
       final barbershopId = await _barbershopRepository.createBarbershop(
         barbershop,
       );
-      emit(BarbershopRegistrationSuccess(barbershopId));
+      emit(BarbershopRegistrationSuccess(barbershopId!));
     } catch (e) {
       emit(BarbershopRegistrationFailure(e.toString()));
     }

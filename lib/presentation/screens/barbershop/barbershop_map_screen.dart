@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import '../../../data/models/barbershop.dart';
-import '../../../data/models/barber.dart';
 import '../../../logic/blocs/map/map_bloc.dart';
 import '../../../logic/blocs/map/map_event.dart';
 import '../../../logic/blocs/map/map_state.dart';
@@ -36,7 +34,7 @@ class _BarbershopMapScreenState extends State<BarbershopMapScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Find Barbershops'),
+        // title: const Text('Find Barbershops'),
         actions: [
           PopupMenuButton<String>(
             onSelected: (value) {

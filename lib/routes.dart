@@ -1,3 +1,4 @@
+import 'package:barberdule/presentation/screens/barbershop/barbershop_map_screen.dart';
 import 'package:flutter/material.dart';
 import 'presentation/screens/booking/book_appointment_screen.dart';
 import 'presentation/screens/barber/barber_profile_screen.dart';
@@ -31,6 +32,7 @@ class AppRoutes {
   static const String appointmentHistory = '/appointment-history';
   static const String barbershopDetails = '/barbershop-details';
   static const String barberDetails = '/barber-details';
+  static const String exploreBarbers = '/explorer-barbers';
 
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
@@ -95,7 +97,7 @@ class AppRoutes {
         return MaterialPageRoute(builder: (_) => const BarberApprovalScreen());
 
       case welcome:
-        return MaterialPageRoute(builder: (_) => const WelcomeScreen());
+        return MaterialPageRoute(builder: (_) => WelcomeScreen());
 
       case main:
         return MaterialPageRoute(builder: (_) => const MainScreen());
@@ -118,6 +120,10 @@ class AppRoutes {
           builder: (_) => BarberDetailsScreen(barberId: args['barberId']),
         );
 
+      case exploreBarbers:
+        return MaterialPageRoute(
+          builder: (_) => const BarbershopMapScreen(),
+        );
       default:
         return MaterialPageRoute(
           builder: (_) => Scaffold(

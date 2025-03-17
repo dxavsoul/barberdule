@@ -169,7 +169,7 @@ class _BarberApprovalScreenState extends State<BarberApprovalScreen>
                       ),
                     ),
                     const SizedBox(height: 4),
-                    Text(barber.bio),
+                    Text(barber.bio ?? 'No bio provided'),
                     const SizedBox(height: 16),
                     Text(
                       'Specialties:',

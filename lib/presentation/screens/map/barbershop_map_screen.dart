@@ -51,8 +51,8 @@ class _BarbershopMapScreenState extends State<BarbershopMapScreen> {
               return GoogleMap(
                 initialCameraPosition: const CameraPosition(
                   target: LatLng(
-                    37.7749,
-                    -122.4194,
+                    40.75965401215422,
+                    -73.91765838699342,
                   ), // Default to San Francisco
                   zoom: 12,
                 ),
@@ -150,10 +150,10 @@ class _BarbershopMapScreenState extends State<BarbershopMapScreen> {
     }
 
     // Add independent barber markers
-    for (final barber in state.independentBarbers) {
+    for (final barber in state.barbers) {
       final marker = Marker(
         markerId: MarkerId('barber_${barber.id}'),
-        position: LatLng(barber.location.latitude, barber.location.longitude),
+        position: LatLng(barber.location!.latitude, barber.location!.longitude),
         infoWindow: InfoWindow(
           title: barber.name,
           snippet: 'Independent Barber - Tap to view details',

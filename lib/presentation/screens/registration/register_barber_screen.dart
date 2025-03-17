@@ -12,7 +12,10 @@ import 'working_hours_picker.dart';
 class RegisterBarberScreen extends StatefulWidget {
   final String? barbershopId;
 
-  const RegisterBarberScreen({Key? key, this.barbershopId}) : super(key: key);
+  const RegisterBarberScreen({
+    Key? key,
+    this.barbershopId,
+  }) : super(key: key);
 
   @override
   State<RegisterBarberScreen> createState() => _RegisterBarberScreenState();
@@ -52,7 +55,11 @@ class _RegisterBarberScreenState extends State<RegisterBarberScreen> {
   @override
   void initState() {
     super.initState();
-    _selectedBarbershopId = widget.barbershopId;
+    // If a barbershop ID is provided, use it directly
+    if (widget.barbershopId != null) {
+      _selectedBarbershopId = widget.barbershopId;
+    }
+    //_selectedBarbershopId = widget.barbershopId;
 
     // Initialize with default working hours
     _workingHours = {
@@ -85,18 +92,17 @@ class _RegisterBarberScreenState extends State<RegisterBarberScreen> {
       final barbershopsStream = barbershopRepository.getAllBarbershops();
 
       // Convert stream to list
-      final barbershops = await barbershopsStream.first;
+      final barbershops = await barbershopsStream;
 
       // Map to the format needed for dropdown
-      _barbershops =
-          barbershops
-              .map(
-                (barbershop) => {
-                  'id': barbershop.id ?? 'unknown',
-                  'name': barbershop.name,
-                },
-              )
-              .toList();
+      _barbershops = barbershops
+          .map(
+            (barbershop) => {
+              'id': barbershop.id ?? 'unknown',
+              'name': barbershop.name,
+            },
+          )
+          .toList();
 
       // If no barbershops found, show a message
       if (_barbershops.isEmpty) {
@@ -161,15 +167,14 @@ class _RegisterBarberScreenState extends State<RegisterBarberScreen> {
     }
 
     return BlocProvider(
-      create:
-          (context) => BarberRegistrationBloc(
-            barberRepository: BarberRepository(),
-            barbershopRepository: BarbershopRepository(),
-          ),
+      create: (context) => BarberRegistrationBloc(
+        barberRepository: BarberRepository(),
+        barbershopRepository: BarbershopRepository(),
+      ),
       child: Builder(
         builder: (context) {
           return Scaffold(
-            appBar: AppBar(title: const Text('Register as Barber')),
+            //appBar: AppBar(title: const Text('Register as Barber')),
             body: BlocConsumer<BarberRegistrationBloc, BarberRegistrationState>(
               listener: (context, state) {
                 if (state is BarberRegistrationSuccess) {
@@ -192,283 +197,303 @@ class _RegisterBarberScreenState extends State<RegisterBarberScreen> {
                 }
               },
               builder: (context, state) {
-                return SingleChildScrollView(
+                return Container(
                   padding: const EdgeInsets.all(16.0),
-                  child: Form(
-                    key: _formKey,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        // Name
-                        TextFormField(
-                          controller: _nameController,
-                          decoration: const InputDecoration(
-                            labelText: 'Full Name',
-                            border: OutlineInputBorder(),
-                          ),
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Please enter your name';
-                            }
-                            return null;
-                          },
-                        ),
-                        const SizedBox(height: 16),
-
-                        // Phone
-                        TextFormField(
-                          controller: _phoneController,
-                          decoration: const InputDecoration(
-                            labelText: 'Phone Number',
-                            border: OutlineInputBorder(),
-                          ),
-                          keyboardType: TextInputType.phone,
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Please enter a phone number';
-                            }
-                            return null;
-                          },
-                        ),
-                        const SizedBox(height: 16),
-
-                        // Email
-                        TextFormField(
-                          controller: _emailController,
-                          decoration: const InputDecoration(
-                            labelText: 'Email',
-                            border: OutlineInputBorder(),
-                          ),
-                          keyboardType: TextInputType.emailAddress,
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Please enter an email';
-                            }
-                            if (!value.contains('@')) {
-                              return 'Please enter a valid email';
-                            }
-                            return null;
-                          },
-                        ),
-                        const SizedBox(height: 16),
-
-                        // Password
-                        TextFormField(
-                          controller: _passwordController,
-                          decoration: InputDecoration(
-                            labelText: 'Password',
-                            border: const OutlineInputBorder(),
-                            suffixIcon: IconButton(
-                              icon: Icon(
-                                _obscurePassword
-                                    ? Icons.visibility_off
-                                    : Icons.visibility,
-                              ),
-                              onPressed: () {
-                                setState(() {
-                                  _obscurePassword = !_obscurePassword;
-                                });
-                              },
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: [
+                        Theme.of(context).primaryColor,
+                        Theme.of(context).primaryColor.withOpacity(0.8),
+                      ],
+                    ),
+                  ),
+                  child: SingleChildScrollView(
+                    child: Form(
+                      key: _formKey,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          const SizedBox(height: 16),
+                          Center(
+                            child: Text(
+                              'Register as Barber',
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .headlineMedium
+                                  ?.copyWith(
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white,
+                                  ),
                             ),
                           ),
-                          obscureText: _obscurePassword,
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Please enter a password';
-                            }
-                            if (value.length < 6) {
-                              return 'Password must be at least 6 characters';
-                            }
-                            return null;
-                          },
-                        ),
-                        const SizedBox(height: 16),
+                          //Text('Register as Barber'),
+                          // Name
+                          TextFormField(
+                            controller: _nameController,
+                            decoration: const InputDecoration(
+                              labelText: 'Full Name',
+                              border: OutlineInputBorder(),
+                            ),
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Please enter your name';
+                              }
+                              return null;
+                            },
+                          ),
+                          const SizedBox(height: 16),
 
-                        // Confirm Password
-                        TextFormField(
-                          controller: _confirmPasswordController,
-                          decoration: InputDecoration(
-                            labelText: 'Confirm Password',
-                            border: const OutlineInputBorder(),
-                            suffixIcon: IconButton(
-                              icon: Icon(
-                                _obscureConfirmPassword
-                                    ? Icons.visibility_off
-                                    : Icons.visibility,
+                          // Phone
+                          TextFormField(
+                            controller: _phoneController,
+                            decoration: const InputDecoration(
+                              labelText: 'Phone Number',
+                              border: OutlineInputBorder(),
+                            ),
+                            keyboardType: TextInputType.phone,
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Please enter a phone number';
+                              }
+                              return null;
+                            },
+                          ),
+                          const SizedBox(height: 16),
+
+                          // Email
+                          TextFormField(
+                            controller: _emailController,
+                            decoration: const InputDecoration(
+                              labelText: 'Email',
+                              border: OutlineInputBorder(),
+                            ),
+                            keyboardType: TextInputType.emailAddress,
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Please enter an email';
+                              }
+                              if (!value.contains('@')) {
+                                return 'Please enter a valid email';
+                              }
+                              return null;
+                            },
+                          ),
+                          const SizedBox(height: 16),
+
+                          // Password
+                          TextFormField(
+                            controller: _passwordController,
+                            decoration: InputDecoration(
+                              labelText: 'Password',
+                              border: const OutlineInputBorder(),
+                              suffixIcon: IconButton(
+                                icon: Icon(
+                                  _obscurePassword
+                                      ? Icons.visibility_off
+                                      : Icons.visibility,
+                                ),
+                                onPressed: () {
+                                  setState(() {
+                                    _obscurePassword = !_obscurePassword;
+                                  });
+                                },
                               ),
-                              onPressed: () {
-                                setState(() {
-                                  _obscureConfirmPassword =
-                                      !_obscureConfirmPassword;
-                                });
-                              },
+                            ),
+                            obscureText: _obscurePassword,
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Please enter a password';
+                              }
+                              if (value.length < 6) {
+                                return 'Password must be at least 6 characters';
+                              }
+                              return null;
+                            },
+                          ),
+                          const SizedBox(height: 16),
+
+                          // Confirm Password
+                          TextFormField(
+                            controller: _confirmPasswordController,
+                            decoration: InputDecoration(
+                              labelText: 'Confirm Password',
+                              border: const OutlineInputBorder(),
+                              suffixIcon: IconButton(
+                                icon: Icon(
+                                  _obscureConfirmPassword
+                                      ? Icons.visibility_off
+                                      : Icons.visibility,
+                                ),
+                                onPressed: () {
+                                  setState(() {
+                                    _obscureConfirmPassword =
+                                        !_obscureConfirmPassword;
+                                  });
+                                },
+                              ),
+                            ),
+                            obscureText: _obscureConfirmPassword,
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Please confirm your password';
+                              }
+                              if (value != _passwordController.text) {
+                                return 'Passwords do not match';
+                              }
+                              return null;
+                            },
+                          ),
+                          const SizedBox(height: 16),
+
+                          // Bio
+                          TextFormField(
+                            controller: _bioController,
+                            decoration: const InputDecoration(
+                              labelText: 'Bio',
+                              border: OutlineInputBorder(),
+                              hintText:
+                                  'Tell clients about yourself and your experience',
+                            ),
+                            maxLines: 3,
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Please enter a bio';
+                              }
+                              return null;
+                            },
+                          ),
+                          const SizedBox(height: 16),
+
+                          // Image URL (optional)
+                          TextFormField(
+                            controller: _imageUrlController,
+                            decoration: const InputDecoration(
+                              labelText: 'Profile Image URL (optional)',
+                              border: OutlineInputBorder(),
                             ),
                           ),
-                          obscureText: _obscureConfirmPassword,
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Please confirm your password';
-                            }
-                            if (value != _passwordController.text) {
-                              return 'Passwords do not match';
-                            }
-                            return null;
-                          },
-                        ),
-                        const SizedBox(height: 16),
+                          const SizedBox(height: 24),
 
-                        // Bio
-                        TextFormField(
-                          controller: _bioController,
-                          decoration: const InputDecoration(
-                            labelText: 'Bio',
-                            border: OutlineInputBorder(),
-                            hintText:
-                                'Tell clients about yourself and your experience',
-                          ),
-                          maxLines: 3,
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Please enter a bio';
-                            }
-                            return null;
-                          },
-                        ),
-                        const SizedBox(height: 16),
+                          // Barbershop Selection
+                          if (widget.barbershopId == null) ...[
+                            const Text(
+                              'Select Barbershop',
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+                            DropdownButtonFormField<String>(
+                              value: _selectedBarbershopId,
+                              decoration: const InputDecoration(
+                                border: OutlineInputBorder(),
+                                contentPadding: EdgeInsets.symmetric(
+                                  horizontal: 16,
+                                  vertical: 8,
+                                ),
+                              ),
+                              hint: const Text('Select a barbershop'),
+                              items: _barbershops.map((barbershop) {
+                                return DropdownMenuItem<String>(
+                                  value: barbershop['id'],
+                                  child: Text(barbershop['name']),
+                                );
+                              }).toList(),
+                              onChanged: (value) {
+                                setState(() {
+                                  _selectedBarbershopId = value;
+                                });
+                              },
+                              validator: (value) {
+                                if (value == null) {
+                                  return 'Please select a barbershop';
+                                }
+                                if (value == 'no_barbershops') {
+                                  return 'No barbershops available. Please register a barbershop first.';
+                                }
+                                return null;
+                              },
+                            ),
+                            if (_barbershops.length == 1 &&
+                                _barbershops[0]['id'] == 'no_barbershops') ...[
+                              const SizedBox(height: 8),
+                              OutlinedButton.icon(
+                                icon: const Icon(Icons.add_business),
+                                label: const Text('Register a Barbershop'),
+                                onPressed: () async {
+                                  final result = await Navigator.pushNamed(
+                                    context,
+                                    AppRoutes.registerBarbershop,
+                                  );
+                                  if (result != null) {
+                                    // Reload barbershops if a new one was registered
+                                    _loadBarbershops();
+                                  }
+                                },
+                              ),
+                            ],
+                            const SizedBox(height: 24),
+                          ],
 
-                        // Image URL (optional)
-                        TextFormField(
-                          controller: _imageUrlController,
-                          decoration: const InputDecoration(
-                            labelText: 'Profile Image URL (optional)',
-                            border: OutlineInputBorder(),
-                          ),
-                        ),
-                        const SizedBox(height: 24),
-
-                        // Barbershop Selection
-                        if (widget.barbershopId == null) ...[
+                          // Specialties
                           const Text(
-                            'Select Barbershop',
+                            'Specialties',
                             style: TextStyle(
                               fontSize: 18,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
                           const SizedBox(height: 8),
-                          DropdownButtonFormField<String>(
-                            value: _selectedBarbershopId,
-                            decoration: const InputDecoration(
-                              border: OutlineInputBorder(),
-                              contentPadding: EdgeInsets.symmetric(
-                                horizontal: 16,
-                                vertical: 8,
-                              ),
+                          Wrap(
+                            spacing: 8,
+                            runSpacing: 8,
+                            children: _availableSpecialties.map((specialty) {
+                              final isSelected = _specialties.contains(
+                                specialty,
+                              );
+                              return FilterChip(
+                                label: Text(specialty),
+                                selected: isSelected,
+                                onSelected: (_) => _toggleSpecialty(specialty),
+                                backgroundColor: Colors.grey.shade200,
+                                selectedColor: Theme.of(
+                                  context,
+                                ).primaryColor.withOpacity(0.3),
+                                checkmarkColor: Theme.of(context).primaryColor,
+                              );
+                            }).toList(),
+                          ),
+                          const SizedBox(height: 24),
+
+                          // Working Hours
+                          const Text(
+                            'Working Hours',
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
                             ),
-                            hint: const Text('Select a barbershop'),
-                            items:
-                                _barbershops.map((barbershop) {
-                                  return DropdownMenuItem<String>(
-                                    value: barbershop['id'],
-                                    child: Text(barbershop['name']),
-                                  );
-                                }).toList(),
-                            onChanged: (value) {
+                          ),
+                          const SizedBox(height: 8),
+
+                          WorkingHoursPicker(
+                            workingHours: _workingHours,
+                            onChanged: (hours) {
                               setState(() {
-                                _selectedBarbershopId = value;
+                                _workingHours = hours;
                               });
                             },
-                            validator: (value) {
-                              if (value == null) {
-                                return 'Please select a barbershop';
-                              }
-                              if (value == 'no_barbershops') {
-                                return 'No barbershops available. Please register a barbershop first.';
-                              }
-                              return null;
-                            },
                           ),
-                          if (_barbershops.length == 1 &&
-                              _barbershops[0]['id'] == 'no_barbershops') ...[
-                            const SizedBox(height: 8),
-                            OutlinedButton.icon(
-                              icon: const Icon(Icons.add_business),
-                              label: const Text('Register a Barbershop'),
-                              onPressed: () async {
-                                final result = await Navigator.pushNamed(
-                                  context,
-                                  AppRoutes.registerBarbershop,
-                                );
-                                if (result != null) {
-                                  // Reload barbershops if a new one was registered
-                                  _loadBarbershops();
-                                }
-                              },
-                            ),
-                          ],
-                          const SizedBox(height: 24),
-                        ],
 
-                        // Specialties
-                        const Text(
-                          'Specialties',
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        const SizedBox(height: 8),
-                        Wrap(
-                          spacing: 8,
-                          runSpacing: 8,
-                          children:
-                              _availableSpecialties.map((specialty) {
-                                final isSelected = _specialties.contains(
-                                  specialty,
-                                );
-                                return FilterChip(
-                                  label: Text(specialty),
-                                  selected: isSelected,
-                                  onSelected:
-                                      (_) => _toggleSpecialty(specialty),
-                                  backgroundColor: Colors.grey.shade200,
-                                  selectedColor: Theme.of(
-                                    context,
-                                  ).primaryColor.withOpacity(0.3),
-                                  checkmarkColor:
-                                      Theme.of(context).primaryColor,
-                                );
-                              }).toList(),
-                        ),
-                        const SizedBox(height: 24),
+                          const SizedBox(height: 32),
 
-                        // Working Hours
-                        const Text(
-                          'Working Hours',
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        const SizedBox(height: 8),
-
-                        WorkingHoursPicker(
-                          workingHours: _workingHours,
-                          onChanged: (hours) {
-                            setState(() {
-                              _workingHours = hours;
-                            });
-                          },
-                        ),
-
-                        const SizedBox(height: 32),
-
-                        // Register Button
-                        ElevatedButton(
-                          onPressed:
-                              state is BarberRegistrationLoading
-                                  ? null
-                                  : () {
+                          // Register Button
+                          ElevatedButton(
+                            onPressed: state is BarberRegistrationLoading
+                                ? null
+                                : () {
                                     if (_formKey.currentState!.validate()) {
                                       if (_specialties.isEmpty) {
                                         ScaffoldMessenger.of(
@@ -485,7 +510,7 @@ class _RegisterBarberScreenState extends State<RegisterBarberScreen> {
 
                                       final barbershopId =
                                           _selectedBarbershopId ??
-                                          widget.barbershopId;
+                                              widget.barbershopId;
                                       if (barbershopId == null) {
                                         ScaffoldMessenger.of(
                                           context,
@@ -523,13 +548,10 @@ class _RegisterBarberScreenState extends State<RegisterBarberScreen> {
                                               password:
                                                   _passwordController.text,
                                               bio: _bioController.text,
-                                              imageUrl:
-                                                  _imageUrlController
-                                                          .text
-                                                          .isEmpty
-                                                      ? null
-                                                      : _imageUrlController
-                                                          .text,
+                                              imageUrl: _imageUrlController
+                                                      .text.isEmpty
+                                                  ? null
+                                                  : _imageUrlController.text,
                                               specialties: _specialties,
                                               barbershopId: barbershopId,
                                               workingHours: _workingHours,
@@ -537,78 +559,79 @@ class _RegisterBarberScreenState extends State<RegisterBarberScreen> {
                                           );
                                     }
                                   },
-                          style: ElevatedButton.styleFrom(
-                            padding: const EdgeInsets.symmetric(vertical: 16),
-                          ),
-                          child:
-                              state is BarberRegistrationLoading
-                                  ? const CircularProgressIndicator(
+                            style: ElevatedButton.styleFrom(
+                              padding: const EdgeInsets.symmetric(vertical: 16),
+                            ),
+                            child: state is BarberRegistrationLoading
+                                ? const CircularProgressIndicator(
                                     color: Colors.white,
                                   )
-                                  : const Text(
+                                : const Text(
                                     'REGISTER AS BARBER',
                                     style: TextStyle(fontSize: 16),
                                   ),
-                        ),
-
-                        const SizedBox(height: 24),
-
-                        // Divider with "or" text
-                        Row(
-                          children: [
-                            const Expanded(child: Divider()),
-                            const Padding(
-                              padding: EdgeInsets.symmetric(horizontal: 16.0),
-                              child: Text(
-                                'OR',
-                                style: TextStyle(
-                                  color: Colors.grey,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ),
-                            const Expanded(child: Divider()),
-                          ],
-                        ),
-
-                        const SizedBox(height: 24),
-
-                        // Login information
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            const Text(
-                              'Already have an account?',
-                              style: TextStyle(fontSize: 16),
-                            ),
-                            TextButton(
-                              onPressed: () {
-                                // Navigate to login screen
-                                Navigator.pushNamed(context, AppRoutes.login);
-                              },
-                              child: const Text(
-                                'Login',
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-
-                        const SizedBox(height: 8),
-
-                        // Login information details
-                        const Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 24.0),
-                          child: Text(
-                            'If you already registered as a barber, you can login with your email and password to access your profile, manage your appointments, and update your availability.',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(color: Colors.grey, fontSize: 14),
                           ),
-                        ),
-                      ],
+
+                          const SizedBox(height: 24),
+
+                          // Divider with "or" text
+                          Row(
+                            children: [
+                              const Expanded(child: Divider()),
+                              const Padding(
+                                padding: EdgeInsets.symmetric(horizontal: 16.0),
+                                child: Text(
+                                  'OR',
+                                  style: TextStyle(
+                                    color: Colors.grey,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                              const Expanded(child: Divider()),
+                            ],
+                          ),
+
+                          const SizedBox(height: 24),
+
+                          // Login information
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              const Text(
+                                'Already have an account?',
+                                style: TextStyle(fontSize: 16),
+                              ),
+                              TextButton(
+                                onPressed: () {
+                                  // Navigate to login screen
+                                  Navigator.pushNamed(context, AppRoutes.login);
+                                },
+                                child: const Text(
+                                  'Login',
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+
+                          const SizedBox(height: 8),
+
+                          // Login information details
+                          const Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 24.0),
+                            child: Text(
+                              'If you already registered as a barber, you can login with your email and password to access your profile, manage your appointments, and update your availability.',
+                              textAlign: TextAlign.center,
+                              style:
+                                  TextStyle(color: Colors.grey, fontSize: 14),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 );

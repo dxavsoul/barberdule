@@ -1,22 +1,15 @@
 import 'package:barberdule/data/repository/barbershop_repository.dart';
 import 'package:barberdule/logic/blocs/map/map_event.dart';
 import 'package:barberdule/logic/blocs/map/map_state.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../../data/models/barbershop.dart';
-import '../../../data/models/barber.dart';
 import '../../../data/repository/barber_repository.dart';
 
 class MapBloc extends Bloc<MapEvent, MapState> {
-  final BarbershopRepository _barbershopRepository;
-  final BarberRepository _barberRepository;
+  final BarbershopRepository barbershopRepository;
+  final BarberRepository barberRepository;
 
-  MapBloc({
-    required BarbershopRepository barbershopRepository,
-    required BarberRepository barberRepository,
-  })  : _barbershopRepository = barbershopRepository,
-        _barberRepository = barberRepository,
-        super(const MapInitial()) {
+  MapBloc({required this.barbershopRepository, required this.barberRepository})
+      : super(const MapInitial()) {
     on<LoadMapLocations>(_onLoadMapLocations);
   }
 
@@ -27,8 +20,8 @@ class MapBloc extends Bloc<MapEvent, MapState> {
     try {
       emit(const MapLocationsLoading());
 
-      final barbershops = await _barbershopRepository.getAllBarbershops();
-      final barbers = await _barberRepository.getAllBarbers();
+      final barbershops = await barbershopRepository.getAllBarbershops();
+      final barbers = await barberRepository.getAllBarbers();
 
       emit(MapLocationsLoaded(barbershops: barbershops, barbers: barbers));
     } catch (e) {

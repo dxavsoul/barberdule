@@ -30,15 +30,15 @@ extension BarberApprovalStatusExtension on BarberApprovalStatus {
 }
 
 class Barber extends Equatable {
-  final String id;
+  final String? id;
+  final String userId;
   final String name;
   final String? imageUrl;
   final String? bio;
-  final List<String> services;
+  // final List<String> services;
   final double? rating;
   final String? barbershopId;
   final GeoPoint? location;
-  final String userId;
   final String phoneNumber;
   final String email;
   final List<String> specialties;
@@ -50,12 +50,12 @@ class Barber extends Equatable {
   final BarberApprovalStatus approvalStatus;
   final String? rejectionReason;
 
-  const Barber({
-    required this.id,
+  Barber({
+    this.id,
     required this.name,
     this.imageUrl,
     this.bio,
-    required this.services,
+    // required this.services,
     this.rating,
     this.barbershopId,
     this.location,
@@ -78,7 +78,7 @@ class Barber extends Equatable {
       name: json['name'] as String,
       imageUrl: json['imageUrl'] as String?,
       bio: json['bio'] as String?,
-      services: List<String>.from(json['services'] as List),
+      // services: List<String>.from(json['services'] as List),
       rating: json['rating'] as double?,
       barbershopId: json['barbershopId'] as String?,
       location: json['location'] as GeoPoint?,
@@ -108,7 +108,7 @@ class Barber extends Equatable {
       'name': name,
       'imageUrl': imageUrl,
       'bio': bio,
-      'services': services,
+      // 'services': services,
       'rating': rating,
       'barbershopId': barbershopId,
       'location': location,
@@ -152,7 +152,7 @@ class Barber extends Equatable {
       name: name ?? this.name,
       imageUrl: imageUrl ?? this.imageUrl,
       bio: bio ?? this.bio,
-      services: services ?? this.services,
+      // services: services ?? this.services,
       rating: rating ?? this.rating,
       barbershopId: barbershopId ?? this.barbershopId,
       location: location ?? this.location,
@@ -176,7 +176,7 @@ class Barber extends Equatable {
         name,
         imageUrl,
         bio,
-        services,
+        // services,
         rating,
         barbershopId,
         location,
