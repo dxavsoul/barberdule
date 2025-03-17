@@ -174,7 +174,15 @@ class _RegisterBarberScreenState extends State<RegisterBarberScreen> {
       child: Builder(
         builder: (context) {
           return Scaffold(
-            //appBar: AppBar(title: const Text('Register as Barber')),
+            appBar: AppBar(
+              backgroundColor: Theme.of(context).primaryColor,
+                title: Text('Register as Barber', style: Theme.of(context)
+                .textTheme
+                .headlineMedium
+                ?.copyWith(
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
+            ), )),
             body: BlocConsumer<BarberRegistrationBloc, BarberRegistrationState>(
               listener: (context, state) {
                 if (state is BarberRegistrationSuccess) {
@@ -216,19 +224,18 @@ class _RegisterBarberScreenState extends State<RegisterBarberScreen> {
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
                           const SizedBox(height: 16),
-                          Center(
-                            child: Text(
-                              'Register as Barber',
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .headlineMedium
-                                  ?.copyWith(
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.white,
-                                  ),
-                            ),
-                          ),
-                          //Text('Register as Barber'),
+                          // Center(
+                          //   child: Text(
+                          //     'Register as Barber',
+                          //     style: Theme.of(context)
+                          //         .textTheme
+                          //         .headlineMedium
+                          //         ?.copyWith(
+                          //       fontWeight: FontWeight.bold,
+                          //       color: Colors.white,
+                          //     ),
+                          //   ),
+                          // ),
                           // Name
                           TextFormField(
                             controller: _nameController,
@@ -375,67 +382,69 @@ class _RegisterBarberScreenState extends State<RegisterBarberScreen> {
                             ),
                           ),
                           const SizedBox(height: 24),
-
-                          // Barbershop Selection
-                          if (widget.barbershopId == null) ...[
-                            const Text(
-                              'Select Barbershop',
-                              style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            const SizedBox(height: 8),
-                            DropdownButtonFormField<String>(
-                              value: _selectedBarbershopId,
-                              decoration: const InputDecoration(
-                                border: OutlineInputBorder(),
-                                contentPadding: EdgeInsets.symmetric(
-                                  horizontal: 16,
-                                  vertical: 8,
+                          if (_barbershops.isNotEmpty) ...[
+                            // Barbershop Selection
+                            if (widget.barbershopId == null) ...[
+                              const Text(
+                                'Select Barbershop',
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
                                 ),
                               ),
-                              hint: const Text('Select a barbershop'),
-                              items: _barbershops.map((barbershop) {
-                                return DropdownMenuItem<String>(
-                                  value: barbershop['id'],
-                                  child: Text(barbershop['name']),
-                                );
-                              }).toList(),
-                              onChanged: (value) {
-                                setState(() {
-                                  _selectedBarbershopId = value;
-                                });
-                              },
-                              validator: (value) {
-                                if (value == null) {
-                                  return 'Please select a barbershop';
-                                }
-                                if (value == 'no_barbershops') {
-                                  return 'No barbershops available. Please register a barbershop first.';
-                                }
-                                return null;
-                              },
-                            ),
-                            if (_barbershops.length == 1 &&
-                                _barbershops[0]['id'] == 'no_barbershops') ...[
                               const SizedBox(height: 8),
-                              OutlinedButton.icon(
-                                icon: const Icon(Icons.add_business),
-                                label: const Text('Register a Barbershop'),
-                                onPressed: () async {
-                                  final result = await Navigator.pushNamed(
-                                    context,
-                                    AppRoutes.registerBarbershop,
+                              DropdownButtonFormField<String>(
+                                value: _selectedBarbershopId,
+                                decoration: const InputDecoration(
+                                  border: OutlineInputBorder(),
+                                  contentPadding: EdgeInsets.symmetric(
+                                    horizontal: 16,
+                                    vertical: 8,
+                                  ),
+                                ),
+                                hint: const Text('Select a barbershop'),
+                                items: _barbershops.map((barbershop) {
+                                  return DropdownMenuItem<String>(
+                                    value: barbershop['id'],
+                                    child: Text(barbershop['name']),
                                   );
-                                  if (result != null) {
-                                    // Reload barbershops if a new one was registered
-                                    _loadBarbershops();
+                                }).toList(),
+                                onChanged: (value) {
+                                  setState(() {
+                                    _selectedBarbershopId = value;
+                                  });
+                                },
+                                validator: (value) {
+                                  if (value == null) {
+                                    return 'Please select a barbershop';
                                   }
+                                  if (value == 'no_barbershops') {
+                                    return 'No barbershops available. Please register a barbershop first.';
+                                  }
+                                  return null;
                                 },
                               ),
+                              if (_barbershops.length == 1 &&
+                                  _barbershops[0]['id'] ==
+                                      'no_barbershops') ...[
+                                const SizedBox(height: 8),
+                                OutlinedButton.icon(
+                                  icon: const Icon(Icons.add_business),
+                                  label: const Text('Register a Barbershop'),
+                                  onPressed: () async {
+                                    final result = await Navigator.pushNamed(
+                                      context,
+                                      AppRoutes.registerBarbershop,
+                                    );
+                                    if (result != null) {
+                                      // Reload barbershops if a new one was registered
+                                      _loadBarbershops();
+                                    }
+                                  },
+                                ),
+                              ],
+                              const SizedBox(height: 24),
                             ],
-                            const SizedBox(height: 24),
                           ],
 
                           // Specialties
@@ -557,6 +566,15 @@ class _RegisterBarberScreenState extends State<RegisterBarberScreen> {
                                               workingHours: _workingHours,
                                             ),
                                           );
+                                    } else {
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(
+                                        const SnackBar(
+                                          content: Text(
+                                            'Please fix the errors in red before submitting.',
+                                          ),
+                                        ),
+                                      );
                                     }
                                   },
                             style: ElevatedButton.styleFrom(
