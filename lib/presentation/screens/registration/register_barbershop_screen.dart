@@ -24,16 +24,12 @@ class _RegisterBarbershopScreenState extends State<RegisterBarbershopScreen> {
   final _addressController = TextEditingController();
   final _phoneController = TextEditingController();
   final _emailController = TextEditingController();
-  final _passwordController = TextEditingController();
-  final _confirmPasswordController = TextEditingController();
   final _descriptionController = TextEditingController();
   final _imageUrlController = TextEditingController();
 
   double _latitude = 0.0;
   double _longitude = 0.0;
   Map<String, dynamic> _workingHours = {};
-  bool _obscurePassword = true;
-  bool _obscureConfirmPassword = true;
 
   @override
   void initState() {
@@ -83,18 +79,15 @@ class _RegisterBarbershopScreenState extends State<RegisterBarbershopScreen> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create:
-          (context) => BarbershopRegistrationBloc(
-            barbershopRepository: BarbershopRepository(),
-          ),
+      create: (context) => BarbershopRegistrationBloc(
+        barbershopRepository: BarbershopRepository(),
+      ),
       child: Builder(
         builder: (context) {
           return Scaffold(
             appBar: AppBar(title: const Text('Register Barbershop')),
-            body: BlocConsumer<
-              BarbershopRegistrationBloc,
-              BarbershopRegistrationState
-            >(
+            body: BlocConsumer<BarbershopRegistrationBloc,
+                BarbershopRegistrationState>(
               listener: (context, state) {
                 if (state is BarbershopRegistrationSuccess) {
                   ScaffoldMessenger.of(context).showSnackBar(
@@ -116,264 +109,221 @@ class _RegisterBarbershopScreenState extends State<RegisterBarbershopScreen> {
                 }
               },
               builder: (context, state) {
-                return SingleChildScrollView(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Form(
-                    key: _formKey,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        // Name
-                        TextFormField(
-                          controller: _nameController,
-                          decoration: const InputDecoration(
-                            labelText: 'Barbershop Name',
-                            border: OutlineInputBorder(),
-                          ),
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Please enter a name';
-                            }
-                            return null;
-                          },
-                        ),
-                        const SizedBox(height: 16),
-
-                        // Address
-                        TextFormField(
-                          controller: _addressController,
-                          decoration: const InputDecoration(
-                            labelText: 'Address',
-                            border: OutlineInputBorder(),
-                          ),
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Please enter an address';
-                            }
-                            return null;
-                          },
-                        ),
-                        const SizedBox(height: 16),
-
-                        // Location
-                        Column(
-                          children: [
-                            Text(
-                              'Location: ${_latitude != 0.0 ? '$_latitude, $_longitude' : 'Not set'}',
-                              style: const TextStyle(fontSize: 16),
-                              overflow: TextOverflow.ellipsis,
+                return Container(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: [
+                        Theme.of(context).primaryColor,
+                        Theme.of(context).primaryColor.withOpacity(0.8),
+                      ],
+                    ),
+                  ),
+                  child: SingleChildScrollView(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Form(
+                      key: _formKey,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          // Name
+                          TextFormField(
+                            controller: _nameController,
+                            decoration: const InputDecoration(
+                              labelText: 'Barbershop Name',
+                              border: OutlineInputBorder(),
                             ),
-                            ElevatedButton(
-                              onPressed: _getCurrentLocation,
-                              child: const Text('Get Current Location'),
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Please enter a name';
+                              }
+                              return null;
+                            },
+                          ),
+                          const SizedBox(height: 16),
+
+                          // Address
+                          TextFormField(
+                            controller: _addressController,
+                            decoration: const InputDecoration(
+                              labelText: 'Address',
+                              border: OutlineInputBorder(),
                             ),
-                          ],
-                        ),
-                        const SizedBox(height: 16),
-
-                        // Phone
-                        TextFormField(
-                          controller: _phoneController,
-                          decoration: const InputDecoration(
-                            labelText: 'Phone Number',
-                            border: OutlineInputBorder(),
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Please enter an address';
+                              }
+                              return null;
+                            },
                           ),
-                          keyboardType: TextInputType.phone,
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Please enter a phone number';
-                            }
-                            return null;
-                          },
-                        ),
-                        const SizedBox(height: 16),
+                          const SizedBox(height: 16),
 
-                        // Email
-                        TextFormField(
-                          controller: _emailController,
-                          decoration: const InputDecoration(
-                            labelText: 'Email',
-                            border: OutlineInputBorder(),
-                          ),
-                          keyboardType: TextInputType.emailAddress,
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Please enter an email';
-                            }
-                            if (!value.contains('@')) {
-                              return 'Please enter a valid email';
-                            }
-                            return null;
-                          },
-                        ),
-                        const SizedBox(height: 16),
-
-                        // Password
-                        TextFormField(
-                          controller: _passwordController,
-                          decoration: InputDecoration(
-                            labelText: 'Password',
-                            border: const OutlineInputBorder(),
-                            suffixIcon: IconButton(
-                              icon: Icon(
-                                _obscurePassword
-                                    ? Icons.visibility_off
-                                    : Icons.visibility,
+                          // Location
+                          Column(
+                            children: [
+                              Text(
+                                'Location: ${_latitude != 0.0 ? '$_latitude, $_longitude' : 'Not set'}',
+                                style: const TextStyle(fontSize: 16),
+                                overflow: TextOverflow.ellipsis,
                               ),
-                              onPressed: () {
-                                setState(() {
-                                  _obscurePassword = !_obscurePassword;
-                                });
-                              },
-                            ),
-                          ),
-                          obscureText: _obscurePassword,
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Please enter a password';
-                            }
-                            if (value.length < 6) {
-                              return 'Password must be at least 6 characters';
-                            }
-                            return null;
-                          },
-                        ),
-                        const SizedBox(height: 16),
-
-                        // Confirm Password
-                        TextFormField(
-                          controller: _confirmPasswordController,
-                          decoration: InputDecoration(
-                            labelText: 'Confirm Password',
-                            border: const OutlineInputBorder(),
-                            suffixIcon: IconButton(
-                              icon: Icon(
-                                _obscureConfirmPassword
-                                    ? Icons.visibility_off
-                                    : Icons.visibility,
+                              ElevatedButton(
+                                onPressed: _getCurrentLocation,
+                                child: const Text('Get Current Location'),
                               ),
-                              onPressed: () {
-                                setState(() {
-                                  _obscureConfirmPassword =
-                                  !_obscureConfirmPassword;
-                                });
-                              },
+                            ],
+                          ),
+                          const SizedBox(height: 16),
+
+                          // Phone
+                          TextFormField(
+                            controller: _phoneController,
+                            decoration: const InputDecoration(
+                              labelText: 'Phone Number',
+                              border: OutlineInputBorder(),
+                            ),
+                            keyboardType: TextInputType.phone,
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Please enter a phone number';
+                              }
+                              return null;
+                            },
+                          ),
+                          const SizedBox(height: 16),
+
+                          // Email
+                          TextFormField(
+                            controller: _emailController,
+                            decoration: const InputDecoration(
+                              labelText: 'Email',
+                              border: OutlineInputBorder(),
+                            ),
+                            keyboardType: TextInputType.emailAddress,
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Please enter an email';
+                              }
+                              if (!value.contains('@')) {
+                                return 'Please enter a valid email';
+                              }
+                              return null;
+                            },
+                          ),
+                          const SizedBox(height: 16),
+
+                          // Description
+                          TextFormField(
+                            controller: _descriptionController,
+                            decoration: const InputDecoration(
+                              labelText: 'Description',
+                              border: OutlineInputBorder(),
+                            ),
+                            maxLines: 3,
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Please enter a description';
+                              }
+                              return null;
+                            },
+                          ),
+                          const SizedBox(height: 16),
+
+                          // Image URL (optional)
+                          TextFormField(
+                            controller: _imageUrlController,
+                            decoration: const InputDecoration(
+                              labelText: 'Image URL (optional)',
+                              border: OutlineInputBorder(),
                             ),
                           ),
-                          obscureText: _obscureConfirmPassword,
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Please confirm your password';
-                            }
-                            if (value != _passwordController.text) {
-                              return 'Passwords do not match';
-                            }
-                            return null;
-                          },
-                        ),
-                        const SizedBox(height: 16),
+                          const SizedBox(height: 24),
 
-                        // Description
-                        TextFormField(
-                          controller: _descriptionController,
-                          decoration: const InputDecoration(
-                            labelText: 'Description',
-                            border: OutlineInputBorder(),
+                          // Working Hours
+                          const Text(
+                            'Working Hours',
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
-                          maxLines: 3,
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Please enter a description';
-                            }
-                            return null;
-                          },
-                        ),
-                        const SizedBox(height: 16),
+                          const SizedBox(height: 8),
 
-                        // Image URL (optional)
-                        TextFormField(
-                          controller: _imageUrlController,
-                          decoration: const InputDecoration(
-                            labelText: 'Image URL (optional)',
-                            border: OutlineInputBorder(),
+                          WorkingHoursPicker(
+                            workingHours: _workingHours,
+                            onChanged: (hours) {
+                              setState(() {
+                                _workingHours = hours;
+                              });
+                            },
                           ),
-                        ),
-                        const SizedBox(height: 24),
 
-                        // Working Hours
-                        const Text(
-                          'Working Hours',
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        const SizedBox(height: 8),
+                          const SizedBox(height: 32),
 
-                        WorkingHoursPicker(
-                          workingHours: _workingHours,
-                          onChanged: (hours) {
-                            setState(() {
-                              _workingHours = hours;
-                            });
-                          },
-                        ),
-
-                        const SizedBox(height: 32),
-
-                        // Register Button
-                        ElevatedButton(
-                          onPressed:
-                              state is BarbershopRegistrationLoading
-                                  ? null
-                                  : () {
+                          // Register Button
+                          ElevatedButton(
+                            onPressed: state is BarbershopRegistrationLoading
+                                ? null
+                                : () {
                                     if (_formKey.currentState!.validate()) {
+                                      String ownerId = '';
+                                      if (FirebaseAuth.instance.currentUser !=
+                                          null) {
+                                        ownerId = FirebaseAuth
+                                            .instance.currentUser!.uid;
+                                      }
+                                      if (_latitude == 0.0 ||
+                                          _longitude == 0.0) {
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(
+                                          const SnackBar(
+                                            content: Text(
+                                              'Please set the location of your barbershop.',
+                                            ),
+                                          ),
+                                        );
+                                        return;
+                                      }
                                       context
                                           .read<BarbershopRegistrationBloc>()
                                           .add(
                                             BarbershopRegistrationSubmitted(
                                               name: _nameController.text,
                                               address: _addressController.text,
-                                              phone:
-                                                  _phoneController.text,
+                                              phone: _phoneController.text,
                                               email: _emailController.text,
                                               description:
                                                   _descriptionController.text,
-                                              imageUrl:
-                                                  _imageUrlController
-                                                          .text
-                                                          .isEmpty
-                                                      ? null
-                                                      : _imageUrlController
-                                                          .text,
+                                              imageUrl: _imageUrlController
+                                                      .text.isEmpty
+                                                  ? null
+                                                  : _imageUrlController.text,
                                               location: GeoPoint(
                                                 _latitude,
                                                 _longitude,
                                               ),
                                               workingHours: _workingHours,
-                                              ownerId:
-                                                  FirebaseAuth
-                                                      .instance
-                                                      .currentUser!
-                                                      .uid,
+                                              ownerId: ownerId.isEmpty
+                                                  ? ownerId
+                                                  : null,
                                             ),
                                           );
                                     }
                                   },
-                          style: ElevatedButton.styleFrom(
-                            padding: const EdgeInsets.symmetric(vertical: 16),
-                          ),
-                          child:
-                              state is BarbershopRegistrationLoading
-                                  ? const CircularProgressIndicator(
+                            style: ElevatedButton.styleFrom(
+                              padding: const EdgeInsets.symmetric(vertical: 16),
+                            ),
+                            child: state is BarbershopRegistrationLoading
+                                ? const CircularProgressIndicator(
                                     color: Colors.white,
                                   )
-                                  : const Text(
+                                : const Text(
                                     'REGISTER BARBERSHOP',
                                     style: TextStyle(fontSize: 16),
                                   ),
-                        ),
-                      ],
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 );
