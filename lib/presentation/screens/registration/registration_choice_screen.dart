@@ -7,8 +7,17 @@ class RegistrationChoiceScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      //appBar: AppBar(title: const Text('Register')),
+      appBar: AppBar(
+          backgroundColor: Theme.of(context).primaryColor,
+          title: Text('Choose Registration Type', style: Theme.of(context)
+              .textTheme
+              .headlineMedium
+              ?.copyWith(
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+          ))),
       body: Container(
+        height: MediaQuery.of(context).size.height,
         decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topCenter,
@@ -26,12 +35,6 @@ class RegistrationChoiceScreen extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                const SizedBox(height: 40),
-                const Text(
-                  'Choose Registration Type',
-                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-                  textAlign: TextAlign.center,
-                ),
                 const SizedBox(height: 40),
                 _buildOptionCard(
                   context,
