@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../widgets/custom_navigation_drawer.dart';
 import '../widgets/custom_bottom_navigation.dart';
 import '../../logic/blocs/profile/profile_bloc.dart';
 import '../../logic/blocs/profile/profile_state.dart';
 import '../../logic/blocs/profile/profile_event.dart';
 import '../../logic/blocs/auth/auth_bloc.dart';
 import '../../logic/blocs/auth/auth_state.dart';
-import '../../routes.dart';
 import 'map/barbershop_map_screen.dart';
 import 'home/home_screen.dart';
 import 'profile/profile_screen.dart';
@@ -45,26 +43,27 @@ class _MainScreenState extends State<MainScreen> {
     return BlocBuilder<AuthBloc, AuthState>(
       builder: (context, authState) {
         // If not authenticated, show map screen with login option
-        if (authState is! AuthAuthenticated) {
-          return Scaffold(
-            appBar: AppBar(
-              title: const Text('Find Barbershops'),
-              elevation: 0,
-              actions: [
-                TextButton.icon(
-                  icon: const Icon(Icons.login, color: Colors.white),
-                  label: const Text(
-                    'Login',
-                    style: TextStyle(color: Colors.white),
-                  ),
-                  onPressed:
-                      () => Navigator.pushNamed(context, AppRoutes.login),
-                ),
-              ],
-            ),
-            body: const BarbershopMapScreen(),
-          );
-        }
+        // if (authState is! AuthAuthenticated) {
+        //   return Scaffold(
+        //     appBar: AppBar(
+        //       backgroundColor: Theme.of(context).primaryColor,
+        //       //title: const Text('Find Barbershops'),
+        //       elevation: 0,
+        //       actions: [
+        //         TextButton.icon(
+        //           icon: const Icon(Icons.login, color: Colors.white),
+        //           label: const Text(
+        //             'Login',
+        //             style: TextStyle(color: Colors.white),
+        //           ),
+        //           onPressed: () =>
+        //               Navigator.pushNamed(context, AppRoutes.login),
+        //         ),
+        //       ],
+        //     ),
+        //     body: const BarbershopMapScreen(),
+        //   );
+        // }
 
         // If authenticated, check profile state
         return BlocBuilder<ProfileBloc, ProfileState>(
@@ -97,11 +96,11 @@ class _MainScreenState extends State<MainScreen> {
               }
 
               return Scaffold(
-                appBar: AppBar(
-                  title: _getTitleForIndex(_selectedIndex, userType),
-                  elevation: 0,
-                ),
-                drawer: const CustomNavigationDrawer(),
+                // appBar: AppBar(
+                //   title: _getTitleForIndex(_selectedIndex, userType),
+                //   elevation: 0,
+                // ),
+                //drawer: const CustomNavigationDrawer(),
                 body: screens[_selectedIndex],
                 bottomNavigationBar: CustomBottomNavigation(
                   currentIndex: _selectedIndex,
