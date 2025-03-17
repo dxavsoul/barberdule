@@ -1,3 +1,5 @@
+import 'package:barberdule/data/models/barbershop.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -30,13 +32,16 @@ class _RegisterBarberScreenState extends State<RegisterBarberScreen> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
+  final _addressController = TextEditingController();
   final _bioController = TextEditingController();
   final _imageUrlController = TextEditingController();
 
   String? _selectedBarbershopId;
+  late Barbershop selectedBarbershop;
   List<String> _specialties = [];
   Map<String, dynamic> _workingHours = {};
   List<Map<String, dynamic>> _barbershops = [];
+  List<Barbershop> lstBarbershop = [];
   bool _isLoading = true;
   bool _obscurePassword = true;
   bool _obscureConfirmPassword = true;
@@ -59,7 +64,6 @@ class _RegisterBarberScreenState extends State<RegisterBarberScreen> {
     if (widget.barbershopId != null) {
       _selectedBarbershopId = widget.barbershopId;
     }
-    //_selectedBarbershopId = widget.barbershopId;
 
     // Initialize with default working hours
     _workingHours = {
@@ -103,6 +107,7 @@ class _RegisterBarberScreenState extends State<RegisterBarberScreen> {
             },
           )
           .toList();
+      lstBarbershop = barbershops.toList();
 
       // If no barbershops found, show a message
       if (_barbershops.isEmpty) {
@@ -140,9 +145,11 @@ class _RegisterBarberScreenState extends State<RegisterBarberScreen> {
     _nameController.dispose();
     _phoneController.dispose();
     _emailController.dispose();
+    _addressController.dispose();
     _passwordController.dispose();
     _confirmPasswordController.dispose();
     _bioController.dispose();
+
     _imageUrlController.dispose();
     super.dispose();
   }
@@ -224,19 +231,6 @@ class _RegisterBarberScreenState extends State<RegisterBarberScreen> {
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
                           const SizedBox(height: 16),
-                          // Center(
-                          //   child: Text(
-                          //     'Register as Barber',
-                          //     style: Theme.of(context)
-                          //         .textTheme
-                          //         .headlineMedium
-                          //         ?.copyWith(
-                          //       fontWeight: FontWeight.bold,
-                          //       color: Colors.white,
-                          //     ),
-                          //   ),
-                          // ),
-                          // Name
                           TextFormField(
                             controller: _nameController,
                             decoration: const InputDecoration(
@@ -412,6 +406,7 @@ class _RegisterBarberScreenState extends State<RegisterBarberScreen> {
                                 onChanged: (value) {
                                   setState(() {
                                     _selectedBarbershopId = value;
+                                    selectedBarbershop = lstBarbershop.firstWhere((element) => element.id == value);
                                   });
                                 },
                                 validator: (value) {
@@ -446,7 +441,20 @@ class _RegisterBarberScreenState extends State<RegisterBarberScreen> {
                               const SizedBox(height: 24),
                             ],
                           ],
-
+                          TextFormField(
+                            controller: _addressController,
+                            decoration: const InputDecoration(
+                              labelText: 'Address',
+                              border: OutlineInputBorder(),
+                            ),
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Please enter address';
+                              }
+                              return null;
+                            },
+                          ),
+                          const SizedBox(height: 16,),
                           // Specialties
                           const Text(
                             'Specialties',
@@ -486,7 +494,6 @@ class _RegisterBarberScreenState extends State<RegisterBarberScreen> {
                             ),
                           ),
                           const SizedBox(height: 8),
-
                           WorkingHoursPicker(
                             workingHours: _workingHours,
                             onChanged: (hours) {
@@ -545,7 +552,7 @@ class _RegisterBarberScreenState extends State<RegisterBarberScreen> {
                                         );
                                         return;
                                       }
-
+                                      //var selectedBarbershop = lstBarbershop.firstWhere((element) => element.id == barbershopId);
                                       context
                                           .read<BarberRegistrationBloc>()
                                           .add(
@@ -556,6 +563,8 @@ class _RegisterBarberScreenState extends State<RegisterBarberScreen> {
                                               email: _emailController.text,
                                               password:
                                                   _passwordController.text,
+                                              address: _addressController.text,
+                                              location: GeoPoint(selectedBarbershop.longitude, selectedBarbershop.latitude),
                                               bio: _bioController.text,
                                               imageUrl: _imageUrlController
                                                       .text.isEmpty
