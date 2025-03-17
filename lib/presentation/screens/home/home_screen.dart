@@ -33,12 +33,14 @@ class HomeScreen extends StatelessWidget {
 
   Widget _buildCustomerHome(BuildContext context) {
     return Scaffold(
+
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              SizedBox(height: 50,),
               const Text(
                 'Welcome back!',
                 style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
@@ -75,7 +77,7 @@ class HomeScreen extends StatelessWidget {
                             context,
                             Icons.map,
                             'Find\nBarbershop',
-                            () => Navigator.pushNamed(context, AppRoutes.main),
+                            () => Navigator.pushNamed(context, AppRoutes.exploreBarbers),
                           ),
                           _buildQuickActionButton(
                             context,
