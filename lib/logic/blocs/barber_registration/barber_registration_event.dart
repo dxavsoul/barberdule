@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
 
 abstract class BarberRegistrationEvent extends Equatable {
@@ -14,6 +15,8 @@ class BarberRegistrationSubmitted extends BarberRegistrationEvent {
   final String password;
   final String bio;
   final String? imageUrl;
+  final String address;
+  final GeoPoint location;
   final List<String> specialties;
   final String barbershopId;
   final Map<String, dynamic> workingHours;
@@ -25,6 +28,8 @@ class BarberRegistrationSubmitted extends BarberRegistrationEvent {
     required this.password,
     required this.bio,
     this.imageUrl,
+    required this.address,
+    required this.location,
     required this.specialties,
     required this.barbershopId,
     required this.workingHours,
@@ -38,6 +43,7 @@ class BarberRegistrationSubmitted extends BarberRegistrationEvent {
     password,
     bio,
     imageUrl,
+    address,
     specialties,
     barbershopId,
     workingHours,
