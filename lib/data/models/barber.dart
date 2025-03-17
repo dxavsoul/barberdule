@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
 
@@ -38,6 +40,7 @@ class Barber extends Equatable {
   // final List<String> services;
   final double? rating;
   final String? barbershopId;
+  final String? address;
   final GeoPoint? location;
   final String phoneNumber;
   final String email;
@@ -58,6 +61,7 @@ class Barber extends Equatable {
     // required this.services,
     this.rating,
     this.barbershopId,
+    this.address,
     this.location,
     required this.userId,
     required this.phoneNumber,
@@ -81,6 +85,7 @@ class Barber extends Equatable {
       // services: List<String>.from(json['services'] as List),
       rating: json['rating'] as double?,
       barbershopId: json['barbershopId'] as String?,
+      address: json['barbershopId'] as String?,
       location: json['location'] as GeoPoint?,
       userId: json['userId'] as String,
       phoneNumber: json['phoneNumber'] as String,
@@ -111,6 +116,7 @@ class Barber extends Equatable {
       // 'services': services,
       'rating': rating,
       'barbershopId': barbershopId,
+      'address': address,
       'location': location,
       'userId': userId,
       'phoneNumber': phoneNumber,
@@ -134,6 +140,7 @@ class Barber extends Equatable {
     List<String>? services,
     double? rating,
     String? barbershopId,
+    String? address,
     GeoPoint? location,
     String? userId,
     String? phoneNumber,
@@ -155,6 +162,7 @@ class Barber extends Equatable {
       // services: services ?? this.services,
       rating: rating ?? this.rating,
       barbershopId: barbershopId ?? this.barbershopId,
+      address: address ?? this.address,
       location: location ?? this.location,
       userId: userId ?? this.userId,
       phoneNumber: phoneNumber ?? this.phoneNumber,
@@ -179,6 +187,7 @@ class Barber extends Equatable {
         // services,
         rating,
         barbershopId,
+        address,
         location,
         userId,
         phoneNumber,
@@ -192,4 +201,23 @@ class Barber extends Equatable {
         approvalStatus,
         rejectionReason,
       ];
+
+  double calculateDistance(GeoPoint otherLocation) {
+    const earthRadius = 6371; // Earth's radius in kilometers
+
+    double dLat = _degreesToRadians(otherLocation.latitude - location!.latitude);
+    double dLon = _degreesToRadians(otherLocation.longitude - location!.longitude);
+
+    double a = sin(dLat / 2) * sin(dLat / 2) +
+        cos(_degreesToRadians(location!.latitude)) * cos(_degreesToRadians(otherLocation.latitude)) *
+            sin(dLon / 2) * sin(dLon / 2);
+
+    double c = 2 * atan2(sqrt(a), sqrt(1 - a));
+
+    return earthRadius * c;
+  }
+
+  double _degreesToRadians(double degrees) {
+    return degrees * pi / 180;
+  }
 }
