@@ -7,6 +7,9 @@
 .buildlog/
 .history
 
+# Firebase File
+firebase.json
+
 
 
 # Flutter repo-specific
