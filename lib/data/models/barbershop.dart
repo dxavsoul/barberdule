@@ -18,7 +18,7 @@ class Barbershop extends Equatable {
   final DateTime? updatedAt;
   final bool isOpen;
   final double distance;
-  final String ownerId; // Firebase Auth user ID of the owner
+  final String? ownerId; // Firebase Auth user ID of the owner
   final List<String> barberIds;
 
   // Add getters for latitude and longitude
