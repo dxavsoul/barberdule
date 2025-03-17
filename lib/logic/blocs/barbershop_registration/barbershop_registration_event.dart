@@ -17,7 +17,7 @@ class BarbershopRegistrationSubmitted extends BarbershopRegistrationEvent {
   final String? imageUrl;
   final GeoPoint location;
   final Map<String, dynamic> workingHours;
-  final String ownerId;
+  final String? ownerId;
 
   const BarbershopRegistrationSubmitted({
     required this.name,
@@ -28,7 +28,7 @@ class BarbershopRegistrationSubmitted extends BarbershopRegistrationEvent {
     this.imageUrl,
     required this.location,
     required this.workingHours,
-    required this.ownerId,
+    this.ownerId,
   });
 
   @override
@@ -40,6 +40,6 @@ class BarbershopRegistrationSubmitted extends BarbershopRegistrationEvent {
         description,
         location,
         workingHours,
-        ownerId,
+        ownerId ?? '',
       ];
 }

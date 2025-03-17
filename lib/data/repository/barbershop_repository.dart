@@ -35,6 +35,7 @@ class BarbershopRepository {
           .get();
       return snapshot.docs.map((doc) {
         final data = doc.data();
+        print(doc.id);
         data['id'] = doc.id;
         return Barbershop.fromJson(data);
       }).toList();
@@ -85,7 +86,10 @@ class BarbershopRepository {
   Future<String?> createBarbershop(Barbershop barbershop) async {
     try {
       final docRef =
-          await _firestore.collection(_collection).add(barbershop.toJson());
+          await _firestore.collection(_collection).add(barbershop.toJson()).then((DocumentReference doc) {
+            print('Document ID: ${doc.id}');
+            return doc;
+          });
       return docRef.id;
     } catch (e) {
       print('Error creating barbershop: $e');

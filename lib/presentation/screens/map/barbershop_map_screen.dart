@@ -1,9 +1,8 @@
+import 'package:barberdule/data/models/barber.dart';
 import 'package:barberdule/data/models/barbershop.dart';
-import 'package:barberdule/data/repository/barbershop_repository.dart';
 import 'package:barberdule/logic/blocs/map/map_bloc.dart';
 import 'package:barberdule/logic/blocs/map/map_event.dart';
 import 'package:barberdule/logic/blocs/map/map_state.dart';
-import 'package:barberdule/presentation/widgets/barbershop_info_window.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:geolocator/geolocator.dart';
@@ -23,13 +22,40 @@ class _BarbershopMapScreenState extends State<BarbershopMapScreen> {
   bool _showBarbershops = true;
   bool _showIndependentBarbers = true;
   LatLng _currentPosition = const LatLng(0, 0);
-  Barbershop? _selectedBarbershop;
   bool _isLoading = true;
 
   @override
   void initState() {
     super.initState();
     context.read<MapBloc>().add(const LoadMapLocations());
+    _initializeUserLocation();
+  }
+
+  Future<void> _initializeUserLocation() async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      final position = await _getCurrentPosition();
+      setState(() {
+        _currentPosition = LatLng(position.latitude, position.longitude);
+        _isLoading = false;
+      });
+
+      // Once map is created and position is available, animate to user location
+      if (_mapController != null) {
+        _animateToPosition(_currentPosition);
+      }
+    } catch (e) {
+      setState(() {
+        _isLoading = false;
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+            content: Text('Could not get current location: ${e.toString()}')),
+      );
+    }
   }
 
   @override
@@ -51,13 +77,16 @@ class _BarbershopMapScreenState extends State<BarbershopMapScreen> {
               return GoogleMap(
                 initialCameraPosition: const CameraPosition(
                   target: LatLng(
-                    40.75965401215422,
-                    -73.91765838699342,
-                  ), // Default to San Francisco
+                    40.75723251257081, -73.98595866417125
+                  ),
                   zoom: 12,
                 ),
                 onMapCreated: (controller) {
                   _mapController = controller;
+                  if (_currentPosition.latitude != 0 &&
+                      _currentPosition.longitude != 0) {
+                    _animateToPosition(_currentPosition);
+                  }
                 },
                 markers: Set<Marker>.of(_markers.values),
                 myLocationEnabled: true,
@@ -66,7 +95,7 @@ class _BarbershopMapScreenState extends State<BarbershopMapScreen> {
             },
           ),
           Positioned(
-            top: 16,
+            top: 40,
             left: 16,
             right: 16,
             child: Card(
@@ -144,6 +173,12 @@ class _BarbershopMapScreenState extends State<BarbershopMapScreen> {
             );
           },
         ),
+        // onTap: () {
+        //   setState(() {
+        //     _selectedBarbershop = barbershop;
+        //   });
+        //   _showBarbershopDetails(barbershop);
+        // },
         icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueBlue),
       );
       _markers['barbershop_${barbershop.id}'] = marker;
@@ -151,6 +186,7 @@ class _BarbershopMapScreenState extends State<BarbershopMapScreen> {
 
     // Add independent barber markers
     for (final barber in state.barbers) {
+      if (barber.barbershopId == null || barber.barbershopId!.isEmpty) {
       final marker = Marker(
         markerId: MarkerId('barber_${barber.id}'),
         position: LatLng(barber.location!.latitude, barber.location!.longitude),
@@ -165,9 +201,16 @@ class _BarbershopMapScreenState extends State<BarbershopMapScreen> {
             );
           },
         ),
+        // onTap: () {
+        //   setState(() {
+        //     _selectedBarber = barber;
+        //   });
+        //   _showBarberDetails(barber);
+        // },
         icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueViolet),
       );
       _markers['barber_${barber.id}'] = marker;
+      }
     }
 
     _updateMarkersVisibility();
@@ -219,6 +262,173 @@ class _BarbershopMapScreenState extends State<BarbershopMapScreen> {
     }
 
     return await Geolocator.getCurrentPosition();
+  }
+
+  void _showBarberDetails(Barber barber) async {
+    final position = await _getCurrentPosition();
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      ),
+      builder: (context) {
+        return Container(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(8),
+                    child: Image.network(
+                      barber.imageUrl ?? '',
+                      width: 100,
+                      height: 100,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) => Container(
+                        width: 100,
+                        height: 100,
+                        color: Colors.grey[300],
+                        child: const Icon(Icons.image, color: Colors.grey),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          barber.name,
+                          style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 20,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        Row(
+                          children: [
+                            const Icon(
+                              Icons.star,
+                              color: Colors.amber,
+                              size: 18,
+                            ),
+                            const SizedBox(width: 4),
+                            Text(
+                              barber.rating.toString(),
+                              style: const TextStyle(fontSize: 16),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 8),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 8,
+                            vertical: 4,
+                          ),
+                          decoration: BoxDecoration(
+                            color: barber.isActive
+                                ? Colors.green[100]
+                                : Colors.red[100],
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                          child: Text(
+                            barber.isActive ? 'Open' : 'Closed',
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: barber.isActive
+                                  ? Colors.green[800]
+                                  : Colors.red[800],
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
+              const Text(
+                'Address',
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+              ),
+              const SizedBox(height: 4),
+              Text(
+                barber.address?? '',
+                style: TextStyle(fontSize: 16, color: Colors.grey[800]),
+              ),
+              const SizedBox(height: 16),
+              const Text(
+                'Distance',
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+              ),
+              const SizedBox(height: 4),
+              Text(
+                '${Geolocator.distanceBetween(position.latitude, position.longitude, barber.location!.latitude, barber.location!.longitude)} kilometers away',
+                style: TextStyle(fontSize: 16, color: Colors.grey[800]),
+              ),
+              const SizedBox(height: 24),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  Expanded(
+                    child: ElevatedButton.icon(
+                      onPressed: () {
+                        // In a real app, this would launch maps or navigation
+                        Navigator.of(context).pop();
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('Navigation would start here'),
+                          ),
+                        );
+                      },
+                      icon: const Icon(Icons.directions),
+                      label: const Text('Directions'),
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: ElevatedButton.icon(
+                      onPressed: () {
+                        // In a real app, this would open phone app
+                        Navigator.of(context).pop();
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('Call would start here'),
+                          ),
+                        );
+                      },
+                      icon: const Icon(Icons.phone),
+                      label: const Text('Call'),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.green,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
+              ElevatedButton(
+                onPressed: () {
+                  // In a real app, this would schedule an appointment
+                  Navigator.of(context).pop();
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Booking appointment would start here'),
+                    ),
+                  );
+                },
+                style: ElevatedButton.styleFrom(backgroundColor: Colors.blue),
+                child: const Text('Book Appointment'),
+              ),
+            ],
+          ),
+        );
+      },
+    );
   }
 
   void _showBarbershopDetails(Barbershop barbershop) {
