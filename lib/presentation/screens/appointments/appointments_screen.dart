@@ -31,8 +31,7 @@ class _AppointmentsScreenState extends State<AppointmentsScreen>
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('My Appointments'),
-        bottom: TabBar(
+        title: TabBar(
           controller: _tabController,
           tabs: const [
             Tab(text: 'Upcoming'),
