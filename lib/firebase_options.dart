@@ -38,29 +38,29 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyB7BnW2b93Z7lImAmXXoA4l3bZRJNP8oBA',
-    appId: '1:1045151563257:web:2461cadc0889c2b6045128',
-    messagingSenderId: '1045151563257',
+    apiKey: 'Key',
+    appId: 'Key',
+    messagingSenderId: 'Key',
     projectId: 'baberdule',
-    authDomain: 'baberdule.firebaseapp.com',
-    storageBucket: 'baberdule.firebasestorage.app',
-    measurementId: 'G-8HF7V4KCV0',
+    authDomain: 'baberdule.',
+    storageBucket: 'baberdule.',
+    measurementId: 'G-key',
   );
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyBZV1UMPvEzgJjT1EKNDefU5XO2pbLUuyI',
-    appId: '1:1045151563257:android:e65ba8eeb0a12a80045128',
-    messagingSenderId: '1045151563257',
+    apiKey: 'key',
+    appId: 'key',
+    messagingSenderId: 'key',
     projectId: 'baberdule',
-    storageBucket: 'baberdule.firebasestorage.app',
+    storageBucket: 'baberdule..app',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyA2aEzxe-mNodebM9gnOfjZ1-A-4Vn_F64',
-    appId: '1:1045151563257:ios:39c6bb4ed68b4a8b045128',
-    messagingSenderId: '1045151563257',
+    apiKey: 'key',
+    appId: 'key',
+    messagingSenderId: 'key',
     projectId: 'baberdule',
-    storageBucket: 'baberdule.firebasestorage.app',
+    storageBucket: 'baberdule..app',
     iosBundleId: 'com.xsarmiento.barberdule',
   );
 }
